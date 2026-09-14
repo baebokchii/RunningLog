@@ -1,0 +1,11 @@
+.DS_Store
+.env
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
+
+# 건강 데이터 원본과 가공 데이터는 개인정보라 커밋하지 않음
+data/
+*.zip
+*.xml
+*.gpx

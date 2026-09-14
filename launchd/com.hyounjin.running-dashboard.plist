@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  다운로드 폴더가 바뀔 때마다 src/update.py - -watch를 실행한다.
+  건강 데이터 zip이 없으면 스크립트가 바로 종료하므로 다른 다운로드에는 영향이 없다.
+
+  설치: cp launchd/com.hyounjin.running-dashboard.plist ~/Library/LaunchAgents/
+        launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.hyounjin.running-dashboard.plist
+  해제: launchctl bootout gui/$(id -u)/com.hyounjin.running-dashboard
+  로그: ~/Library/Logs/running-dashboard.log
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.hyounjin.running-dashboard</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/anaconda3/bin/python3</string>
+        <string>/Users/hyounjin/Documents/GitHub/running-dashboard/src/update.py</string>
+        <string>--watch</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/hyounjin/Documents/GitHub/running-dashboard</string>
+
+    <key>WatchPaths</key>
+    <array>
+        <string>/Users/hyounjin/Downloads</string>
+    </array>
+
+    <key>ThrottleInterval</key>
+    <integer>15</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/hyounjin/Library/Logs/running-dashboard.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/hyounjin/Library/Logs/running-dashboard.log</string>
+</dict>
+</plist>
