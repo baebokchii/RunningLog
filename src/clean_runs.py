@@ -42,7 +42,7 @@ def drop_duplicates_across_apps(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
         n for n in nrc.index for w in watch.index
         if df.at[w, "start"] < end[n] and df.at[n, "start"] < end[w]
     }
-    return df.drop(index=dup_index), len(dup_index)
+    return df.drop(index=list(dup_index)), len(dup_index)
 
 
 def main() -> None:
@@ -51,9 +51,10 @@ def main() -> None:
     total = len(df)
 
     df, dup_count = drop_duplicates_across_apps(df)
-    short = df["distance_km"] < MIN_DISTANCE_KM
+    # 거리나 시간이 비어 있는 기록(NaN)은 비교식이 False라 걸러지지 않으므로 따로 뺀다
+    short = df["distance_km"].isna() | (df["distance_km"] < MIN_DISTANCE_KM)
     df = df[~short]
-    slow = df["pace_min_per_km"] > MAX_PACE_MIN_PER_KM
+    slow = df["pace_min_per_km"].isna() | (df["pace_min_per_km"] > MAX_PACE_MIN_PER_KM)
     df = df[~slow].sort_values("start")
 
     runs = pd.DataFrame({
@@ -88,8 +89,8 @@ def main() -> None:
 
     print(f"원본 {total}회")
     print(f"  - 두 앱 중복: {dup_count}회 제외")
-    print(f"  - 거리 {MIN_DISTANCE_KM}km 미만: {int(short.sum())}회 제외")
-    print(f"  - 페이스 {MAX_PACE_MIN_PER_KM}분/km 초과: {int(slow.sum())}회 제외")
+    print(f"  - 거리 {MIN_DISTANCE_KM}km 미만 또는 없음: {int(short.sum())}회 제외")
+    print(f"  - 페이스 {MAX_PACE_MIN_PER_KM}분/km 초과 또는 없음: {int(slow.sum())}회 제외")
     print(f"→ 최종 {len(runs)}회, {runs['거리_km'].sum():,.1f} km ({runs['날짜'].min()} ~ {runs['날짜'].max()})")
     print(f"평균심박이 있는 기록: {runs['평균심박'].notna().sum()}회")
     print(f"저장: {RUNS_CSV.relative_to(ROOT)}, {MONTHLY_CSV.relative_to(ROOT)}")

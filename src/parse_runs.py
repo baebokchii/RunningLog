@@ -94,8 +94,8 @@ def workout_row(el) -> dict:
     else:
         distance = to_km(to_float(a.get("totalDistance")), a.get("totalDistanceUnit", "km"))
 
-    hr = stats.get("HeartRate", {})
-    energy = stats.get("ActiveEnergyBurned", {})
+    avg_hr = to_float(stats.get("HeartRate", {}).get("average"))
+    energy_kcal = to_float(stats.get("ActiveEnergyBurned", {}).get("sum"))
 
     temp, temp_unit = parse_quantity(meta.get("HKWeatherTemperature"))
     if temp is not None and temp_unit == "degF":
@@ -117,8 +117,8 @@ def workout_row(el) -> dict:
         "duration_min": round(duration, 2) if duration else None,
         "distance_km": round(distance, 3) if distance else None,
         "pace_min_per_km": round(pace, 2) if pace else None,
-        "avg_hr": round(to_float(hr.get("average")), 1) if hr.get("average") else None,
-        "energy_kcal": round(to_float(energy.get("sum")), 1) if energy.get("sum") else None,
+        "avg_hr": round(avg_hr, 1) if avg_hr is not None else None,
+        "energy_kcal": round(energy_kcal, 1) if energy_kcal is not None else None,
         "indoor": meta.get("HKIndoorWorkout") == "1",
         "temp_c": round(temp, 1) if temp is not None else None,
         "humidity_pct": round(humidity, 1) if humidity is not None else None,
