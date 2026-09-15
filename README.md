@@ -4,7 +4,7 @@
 
 **대시보드 보기:** [Tableau Public – Running Log Dashboard](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
 
-[![러닝 로그 대시보드](docs/dashboard.png)](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
+[![러닝 로그 대시보드](docs/RunningLog.png)](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
 
 ## 주요 발견 (2022-06 ~ 2026-09, 러닝 91회)
 
