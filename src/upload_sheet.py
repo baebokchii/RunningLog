@@ -45,8 +45,13 @@ def main() -> None:
             print("(--dry-run: 업로드하지 않음)")
             return
         rows = json.loads(new.to_json(orient="records", force_ascii=False))
-        result = call_web_app(requests.post(url, json={"token": token, "rows": rows}, timeout=120))
-        print(f"업로드 완료: 추가 {result['added']}개, 중복으로 건너뜀 {result['skipped']}개, 시트 전체 {result['total']}개")
+        try:
+            result = call_web_app(requests.post(url, json={"token": token, "rows": rows}, timeout=120))
+            print(f"업로드 완료: 추가 {result['added']}개, 중복으로 건너뜀 {result['skipped']}개, 시트 전체 {result['total']}개")
+        except requests.RequestException as e:
+            # 시트에는 기록이 들어갔는데 결과 페이지(리다이렉트)만 404가 난 적이 있어서(2026-09-15)
+            # 여기서 끝내지 않고, 아래에서 시트를 다시 읽어 전부 올라갔는지로 성공 여부를 판단한다
+            print(f"업로드 응답을 받지 못했어요({type(e).__name__}). 시트에 올라갔는지 다시 확인해요.")
         existing = fetch_ids(url, token)
 
     missing = set(runs["기록ID"]) - existing
