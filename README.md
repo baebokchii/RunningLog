@@ -2,6 +2,16 @@
 
 애플 피트니스(애플워치)에 쌓인 내 러닝 기록으로 "나는 언제, 어떤 조건에서 잘 뛰는가"를 보여주는 대시보드 프로젝트입니다.
 
+**대시보드 보기:** [Tableau Public – Running Log Dashboard](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
+
+[![러닝 로그 대시보드](docs/dashboard.png)](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
+
+## 주요 발견 (2022-06 ~ 2026-09, 러닝 91회)
+
+- **총 227.1km**를 달렸고, 기록 기간 52개월 중 29개월 동안 뛰었습니다.
+- **2025년 6월부터 거의 매달** 뛰었습니다. 그 뒤로 쉰 달은 2025년 12월, 2026년 6월 두 번뿐입니다.
+- **밖에서 뛸 때 1km당 48초 빠릅니다.** 중앙 페이스 기준 실외 6'15", 실내(러닝머신) 7'04"입니다. 러닝머신 거리는 GPS가 아닌 손목 움직임으로 추정한 값이라 실내 페이스에는 측정 오차가 있을 수 있습니다.
+
 ## 대시보드로 답할 질문
 
 1. **꾸준함**: 언제 많이 뛰었고 언제 쉬었나? 월별 거리는 어떻게 늘어났나?
