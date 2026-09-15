@@ -37,18 +37,20 @@
 ```
 아이폰 건강 앱 내보내기 → 맥으로 AirDrop
   → launchd가 다운로드 폴더 변화를 감지해 src/update.py --watch 실행
-  → 시트에서 직접 채운 평균심박 가져오기 → 러닝 추출(가져온 값으로 덮어쓰기) → 정리
+  → 러닝 추출 → 정리
   → 구글 시트에 없는 기록ID만 추가 (월별 탭 재계산) → 전부 올라간 것을 확인하면 zip 삭제
   → Tableau Public이 구글 시트를 하루 1번 동기화
 ```
 
+심박이 없던 예전 나이키 런클럽 기록은 시트에 평균심박을 직접 채운 뒤, 처음 한 번만 `data/sheet_overrides.csv`로 가져왔습니다. 이후 기록은 애플워치가 심박을 남기므로 자동 업데이트에서는 시트 값을 가져오지 않습니다. 시트에 이미 있는 기록은 업로드 때 덮어쓰지 않기 때문에 직접 채운 값도 그대로 남습니다.
+
 | 파일 | 역할 |
 |---|---|
-| `src/sync_from_sheet.py` | 시트에서 직접 채운 평균심박 → `data/sheet_overrides.csv` |
-| `src/parse_runs.py` | 건강 데이터 zip → `data/runs.csv` (시트에서 가져온 평균심박 반영) |
+| `src/parse_runs.py` | 건강 데이터 zip → `data/runs.csv` (받아둔 평균심박 반영) |
 | `src/clean_runs.py` | 정리 + 기록ID 부여 → `data/runs_clean.csv`, `data/monthly.csv` |
 | `src/upload_sheet.py` | 시트에 없는 기록만 업로드하고, 전부 올라갔는지 확인 |
-| `src/update.py` | 위 네 단계 실행 후 zip 삭제 (`--watch`: 자동 실행용) |
+| `src/update.py` | 위 세 단계 실행 후 zip 삭제 (`--watch`: 자동 실행용) |
+| `src/sync_from_sheet.py` | (직접 실행할 때만) 시트에서 직접 채운 평균심박 → `data/sheet_overrides.csv` |
 | `src/common.py` | 공통 경로, 기록ID, 시트 연결 함수 |
 | `apps_script/Code.gs` | 구글 시트 쪽 웹 앱: 중복 거르기, 월별 요약 |
 | `launchd/…plist` | 다운로드 폴더 감시 설정 |

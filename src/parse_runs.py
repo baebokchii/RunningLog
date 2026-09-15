@@ -2,7 +2,7 @@
 
 - 1GB가 넘는 XML을 압축을 풀지 않고 스트리밍으로 읽는다.
 - 심박·수면 같은 다른 건강 기록과 GPS 경로는 저장하지 않는다.
-- 구글 시트에서 직접 채운 평균심박(data/sheet_overrides.csv)이 있으면 그 값으로 덮어쓴다.
+- 예전에 구글 시트에서 받아둔 평균심박(data/sheet_overrides.csv)이 있으면 그 값으로 덮어쓴다.
 
 사용법: python src/parse_runs.py [zip 경로]   (기본값: ~/Downloads/내보내기.zip)
 """

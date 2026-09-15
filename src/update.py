@@ -1,4 +1,4 @@
-"""건강 데이터 zip이 들어오면 시트 수정값 가져오기 → 추출 → 정리 → 업로드를 한 번에 실행한다.
+"""건강 데이터 zip이 들어오면 추출 → 정리 → 업로드를 한 번에 실행한다.
 
 ~/Downloads에서 가장 최근의 건강 데이터 zip('내보내기*.zip' 또는 'export*.zip')을 찾아 처리하고,
 정리된 기록이 모두 구글 시트에 있는 것이 확인되면 zip을 삭제한다. (중간에 실패하면 삭제하지 않음)
@@ -125,7 +125,6 @@ def main() -> None:
 
         print(f"\n[{datetime.now():%Y-%m-%d %H:%M:%S}] 처리할 파일: {nfc(zip_path.name)}", flush=True)
         try:
-            run("src/sync_from_sheet.py")
             run("src/parse_runs.py", str(zip_path))
             run("src/clean_runs.py")
             output = run("src/upload_sheet.py", *(["--dry-run"] if args.dry_run else []))
