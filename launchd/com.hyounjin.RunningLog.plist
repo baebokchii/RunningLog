@@ -4,15 +4,15 @@
   다운로드 폴더가 바뀔 때마다 src/update.py - -watch를 실행한다.
   건강 데이터 zip이 없으면 스크립트가 바로 종료하므로 다른 다운로드에는 영향이 없다.
 
-  설치: cp launchd/com.hyounjin.running-dashboard.plist ~/Library/LaunchAgents/
-        launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.hyounjin.running-dashboard.plist
-  해제: launchctl bootout gui/$(id -u)/com.hyounjin.running-dashboard
+  설치: cp launchd/com.hyounjin.RunningLog.plist ~/Library/LaunchAgents/
+        launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.hyounjin.RunningLog.plist
+  해제: launchctl bootout gui/$(id -u)/com.hyounjin.RunningLog
   로그: ~/Library/Logs/RunningLog.log
 -->
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.hyounjin.running-dashboard</string>
+    <string>com.hyounjin.RunningLog</string>
 
     <key>ProgramArguments</key>
     <array>
