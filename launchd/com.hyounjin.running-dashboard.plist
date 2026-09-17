@@ -7,7 +7,7 @@
   설치: cp launchd/com.hyounjin.running-dashboard.plist ~/Library/LaunchAgents/
         launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.hyounjin.running-dashboard.plist
   해제: launchctl bootout gui/$(id -u)/com.hyounjin.running-dashboard
-  로그: ~/Library/Logs/running-dashboard.log
+  로그: ~/Library/Logs/RunningLog.log
 -->
 <plist version="1.0">
 <dict>
@@ -33,8 +33,8 @@
     <integer>15</integer>
 
     <key>StandardOutPath</key>
-    <string>/Users/hyounjin/Library/Logs/running-dashboard.log</string>
+    <string>/Users/hyounjin/Library/Logs/RunningLog.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/hyounjin/Library/Logs/running-dashboard.log</string>
+    <string>/Users/hyounjin/Library/Logs/RunningLog.log</string>
 </dict>
 </plist>
