@@ -17,12 +17,12 @@
     <key>ProgramArguments</key>
     <array>
         <string>/opt/anaconda3/bin/python3</string>
-        <string>/Users/hyounjin/Documents/GitHub/running-dashboard/src/update.py</string>
+        <string>/Users/hyounjin/Documents/GitHub/RunningLog/src/update.py</string>
         <string>--watch</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/hyounjin/Documents/GitHub/running-dashboard</string>
+    <string>/Users/hyounjin/Documents/GitHub/RunningLog</string>
 
     <key>WatchPaths</key>
     <array>
