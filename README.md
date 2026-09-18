@@ -2,9 +2,9 @@
 
 애플 피트니스(애플워치)에 쌓인 내 러닝 기록으로 "나는 언제, 어떤 조건에서 잘 뛰는가"를 보여주는 대시보드 프로젝트입니다.
 
-**대시보드 보기:** [Tableau Public – Running Log Dashboard](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
+**대시보드 보기:** [Tableau Public – Running Log Dashboard](https://public.tableau.com/views/RunningLogDashboard/RunningLog)
 
-[![러닝 로그 대시보드](docs/RunningLog.png)](https://public.tableau.com/app/profile/hyounjin.bae/viz/RunningLogDashboard/sheet7)
+[![러닝 로그 대시보드](docs/RunningLog.png)](https://public.tableau.com/views/RunningLogDashboard/RunningLog)
 
 ## 주요 발견 (2022-06 ~ 2026-09, 러닝 91회)
 
