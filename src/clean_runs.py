@@ -1,7 +1,8 @@
-"""data/runs.csv를 정리해 Tableau와 구글 시트에서 쓸 CSV 두 개를 만든다.
+"""data/runs.csv(전체 내보내기)와 data/shortcut_runs.csv(단축어)를 정리해 Tableau와 구글 시트에서 쓸 CSV 두 개를 만든다.
 
 정리 기준
 - 같은 러닝이 애플워치와 나이키 런클럽에 중복 기록되면 애플워치 기록만 남긴다 (심박이 있어서).
+- 단축어로 먼저 올린 러닝이 내보내기에도 있으면 단축어 기록을 남긴다 (이미 시트에 있어서).
 - 거리 0.5km 미만은 뺀다 (기록 오류).
 - 1km당 12분을 넘는 기록은 걷기·멈춤이 섞인 것으로 보고 뺀다.
 
@@ -16,6 +17,7 @@
 import pandas as pd
 
 from common import DATA_DIR, ROOT, device_label, record_id
+from shortcut_runs import OUT_CSV as SHORTCUT_CSV, SOURCE as SHORTCUT_SOURCE
 
 IN_CSV = DATA_DIR / "runs.csv"
 RUNS_CSV = DATA_DIR / "runs_clean.csv"
@@ -33,24 +35,28 @@ def pace_label(pace: float) -> str:
     return f"{minutes}'{seconds:02d}\""
 
 
-def drop_duplicates_across_apps(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    """시간이 겹치는 애플워치·나이키 런클럽 기록 쌍에서 나이키 쪽을 뺀다."""
+def drop_duplicates_across_sources(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+    """시간이 겹치는 기록 쌍에서 우선순위가 낮은 쪽을 뺀다.
+
+    단축어 기록 > 애플워치(내보내기) > 나이키 런클럽 순으로 남긴다. 단축어 기록은 이미 시트에
+    올라가 있으므로, 같은 러닝이 나중에 내보내기로 들어와도 시트에 두 번 올라가지 않게 한다.
+    """
     end = df["start"] + pd.to_timedelta(df["duration_min"], unit="m")
-    watch = df[df["기기"] == "애플워치"]
-    nrc = df[df["기기"] == "나이키 런클럽"]
+    rank = df["source"].eq(SHORTCUT_SOURCE).map({True: 0, False: 1}) + df["기기"].eq("나이키 런클럽")
     dup_index = {
-        n for n in nrc.index for w in watch.index
-        if df.at[w, "start"] < end[n] and df.at[n, "start"] < end[w]
+        b for a in df.index for b in df.index
+        if rank[a] < rank[b] and df.at[a, "start"] < end[b] and df.at[b, "start"] < end[a]
     }
     return df.drop(index=list(dup_index)), len(dup_index)
 
 
 def main() -> None:
-    df = pd.read_csv(IN_CSV, parse_dates=["start"])
+    sources = [p for p in (IN_CSV, SHORTCUT_CSV) if p.exists()]
+    df = pd.concat([pd.read_csv(p, parse_dates=["start"]) for p in sources], ignore_index=True)
     df["기기"] = df["source"].map(device_label)
     total = len(df)
 
-    df, dup_count = drop_duplicates_across_apps(df)
+    df, dup_count = drop_duplicates_across_sources(df)
     # 거리나 시간이 비어 있는 기록(NaN)은 비교식이 False라 걸러지지 않으므로 따로 뺀다
     short = df["distance_km"].isna() | (df["distance_km"] < MIN_DISTANCE_KM)
     df = df[~short]
@@ -88,7 +94,7 @@ def main() -> None:
     monthly.to_csv(MONTHLY_CSV, index=False, encoding="utf-8-sig")
 
     print(f"원본 {total}회")
-    print(f"  - 두 앱 중복: {dup_count}회 제외")
+    print(f"  - 중복 기록(두 앱·단축어): {dup_count}회 제외")
     print(f"  - 거리 {MIN_DISTANCE_KM}km 미만 또는 없음: {int(short.sum())}회 제외")
     print(f"  - 페이스 {MAX_PACE_MIN_PER_KM}분/km 초과 또는 없음: {int(slow.sum())}회 제외")
     print(f"→ 최종 {len(runs)}회, {runs['거리_km'].sum():,.1f} km ({runs['날짜'].min()} ~ {runs['날짜'].max()})")
