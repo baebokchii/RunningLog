@@ -1,0 +1,14 @@
+.DS_Store
+.env
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
+
+# 건강 데이터 원본과 가공 데이터는 개인정보라 커밋하지 않음
+data/
+*.zip
+*.xml
+*.gpx
+
+# 로컬 자동 실행 설정 (경로가 이 맥에 맞춰져 있음)
+launchd/
