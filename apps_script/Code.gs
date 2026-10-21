@@ -17,26 +17,7 @@ const MONTHLY_HEADERS = ['연월', '러닝_횟수', '거리_km', '실내_횟수'
 
 function doGet(e) {
   if (!isAuthorized_(e.parameter.token)) return json_({ error: 'unauthorized' });
-  const sheet = getRunsSheet_();
-  // action=rows: 시트에서 직접 고친 값(예: 평균심박)을 파이썬으로 가져갈 때 사용
-  if (e.parameter.action === 'rows') return json_({ rows: readRows_(sheet) });
-  return json_({ ids: Array.from(existingIds_(sheet)) });
-}
-
-/** 시트의 모든 러닝 기록을 {열 이름: 값} 목록으로. 날짜는 'yyyy-MM-dd' 문자열로 바꾼다. */
-function readRows_(sheet) {
-  const last = sheet.getLastRow();
-  if (last < 2) return [];
-  const tz = Session.getScriptTimeZone();
-  return sheet.getRange(2, 1, last - 1, HEADERS.length).getValues().map(r => {
-    const row = {};
-    HEADERS.forEach((h, i) => {
-      // 시트에서 읽은 날짜는 instanceof Date 판별이 실패할 수 있어 타입 문자열로 확인한다
-      const isDate = Object.prototype.toString.call(r[i]) === '[object Date]';
-      row[h] = isDate ? Utilities.formatDate(r[i], tz, 'yyyy-MM-dd') : r[i];
-    });
-    return row;
-  });
+  return json_({ ids: Array.from(existingIds_(getRunsSheet_())) });
 }
 
 function doPost(e) {

@@ -6,30 +6,21 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
 import requests
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
-SHEET_OVERRIDES_CSV = DATA_DIR / "sheet_overrides.csv"  # 구글 시트에서 직접 채운 평균심박
 
 
 def device_label(source: str) -> str:
+    # 시트의 예전 기록에는 나이키 런클럽도 있어서 같은 이름 규칙을 유지한다
     return "애플워치" if "Watch" in source else "나이키 런클럽"
 
 
 def record_id(start: datetime, device: str) -> str:
     """시작 시각과 기기로 만든 고유 ID. 시작 시각 자체는 공개 데이터에 넣지 않는다."""
     return hashlib.sha1(f"{start:%Y-%m-%d %H:%M}|{device}".encode()).hexdigest()[:12]
-
-
-def load_hr_overrides() -> dict[str, float]:
-    """구글 시트에서 가져온 {기록ID: 평균심박}. 파일이 없으면 빈 딕셔너리."""
-    if not SHEET_OVERRIDES_CSV.exists():
-        return {}
-    df = pd.read_csv(SHEET_OVERRIDES_CSV, dtype={"기록ID": str}).dropna(subset=["평균심박"])
-    return dict(zip(df["기록ID"], df["평균심박"].astype(float)))
 
 
 def sheet_settings() -> tuple[str, str]:
