@@ -6,10 +6,8 @@
 3) 정리된 기록이 모두 시트에 있는지 다시 확인한다. 하나라도 없으면 실패로 끝난다.
 
 필요한 설정 (.env): RUNNING_SHEET_URL, RUNNING_SHEET_TOKEN
-사용법: python src/upload_sheet.py [--dry-run]
 """
 
-import argparse
 import json
 import sys
 
@@ -25,40 +23,34 @@ def fetch_ids(url: str, token: str) -> set[str]:
     return set(call_web_app(requests.get(url, params={"token": token}, timeout=60))["ids"])
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dry-run", action="store_true", help="올리지 않고 새 기록만 보여줌")
-    args = parser.parse_args()
-
+def main() -> str:
+    """결과를 한 줄로 돌려준다 (알림에 씀)."""
     url, token = sheet_settings()
     runs = pd.read_csv(RUNS_CSV, dtype={"기록ID": str, "연월": str})
     existing = fetch_ids(url, token)
     new = runs[~runs["기록ID"].isin(existing)]
 
     print(f"시트에 있는 기록 {len(existing)}개 / 정리된 기록 {len(runs)}개 / 새 기록 {len(new)}개")
+    summary = "올릴 새 기록이 없어요."
     if new.empty:
-        print("올릴 새 기록이 없어요.")
+        print(summary)
     else:
         for r in new.itertuples(index=False):
             print(f"  + {r.날짜} {r.장소} {r.거리_km}km {r.페이스_표시}")
-        if args.dry_run:
-            print("(--dry-run: 업로드하지 않음)")
-            return
         rows = json.loads(new.to_json(orient="records", force_ascii=False))
         try:
             result = call_web_app(requests.post(url, json={"token": token, "rows": rows}, timeout=120))
-            print(f"업로드 완료: 추가 {result['added']}개, 중복으로 건너뜀 {result['skipped']}개, 시트 전체 {result['total']}개")
+            summary = f"업로드 완료: 추가 {result['added']}개, 시트 전체 {result['total']}개"
+            print(summary)
         except requests.RequestException as e:
             # 시트에는 기록이 들어갔는데 결과 페이지(리다이렉트)만 404가 난 적이 있어서(2026-09-15)
             # 여기서 끝내지 않고, 아래에서 시트를 다시 읽어 전부 올라갔는지로 성공 여부를 판단한다
             print(f"업로드 응답을 받지 못했어요({type(e).__name__}). 시트에 올라갔는지 다시 확인해요.")
+            summary = f"업로드 완료: 추가 {len(new)}개"
         existing = fetch_ids(url, token)
 
     missing = set(runs["기록ID"]) - existing
     if missing:
         sys.exit(f"시트 확인 실패: 정리된 기록 중 {len(missing)}개가 시트에 없어요.")
     print(f"시트 확인 완료: 정리된 기록 {len(runs)}개가 모두 시트에 있어요.")
-
-
-if __name__ == "__main__":
-    main()
+    return summary
